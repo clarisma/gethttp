@@ -17,8 +17,8 @@ std::wstring HttpClient::toWideString(std::string_view s)
 
 HttpClient::HttpClient(const char* host) :
     host_(toWideString(host)),
-    hSession_(NULL),
-    hConnect_(NULL)
+    hSession_(nullptr),
+    hConnect_(nullptr)
 {
 }
 
@@ -38,13 +38,15 @@ void HttpClient::open()
     {
         std::cerr << "WinHttpConnect failed: " << GetLastError() << std::endl;
         WinHttpCloseHandle(hSession_);
-        hSession_ = NULL;
+        hSession_ = nullptr;
         return;
     }
 }
 
 HttpResponse HttpClient::get(const char* url)
 {
+    if(!isOpen()) open();
+
     std::wstring urlW = toWideString(url);
     HINTERNET hRequest = WinHttpOpenRequest(hConnect_, L"GET", urlW.c_str(),
         NULL, WINHTTP_NO_REFERER, WINHTTP_DEFAULT_ACCEPT_TYPES, WINHTTP_FLAG_SECURE);
@@ -80,13 +82,30 @@ void HttpClient::close()
     if(hConnect_)
     {
         WinHttpCloseHandle(hConnect_);
-        hConnect_ = NULL;
+        hConnect_ = nullptr;
     }
     if(hSession_)
     {
         WinHttpCloseHandle(hSession_);
-        hSession_ = NULL;
+        hSession_ = nullptr;
     }
+}
+
+int HttpResponse::status() const
+{
+    DWORD statusCode = 0;
+    DWORD statusCodeSize = sizeof(statusCode);
+
+    // Query the status code from the headers
+    if (!WinHttpQueryHeaders(hRequest_,
+        WINHTTP_QUERY_STATUS_CODE | WINHTTP_QUERY_FLAG_NUMBER,
+        WINHTTP_HEADER_NAME_BY_INDEX, &statusCode,
+        &statusCodeSize, WINHTTP_NO_HEADER_INDEX))
+    {
+        std::cerr << "Error querying status code: " << GetLastError() << std::endl;
+        return 0;
+    }
+    return static_cast<int>(statusCode);
 }
 
 size_t HttpResponse::read(void* buf, size_t size)
@@ -121,7 +140,7 @@ void HttpResponse::close()
     if(hRequest_)
     {
         WinHttpCloseHandle(hRequest_);
-        hRequest_ = NULL;
+        hRequest_ = nullptr;
     }
 }
 

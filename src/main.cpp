@@ -9,13 +9,15 @@ using namespace clarisma;
 int main(int argc, char* argv[])
 {
 	HttpClient client("httpbin.org");
-	HttpResponse res = client.get("/get");
+	client.open();
+	HttpResponse res = client.get("/drip?duration=20&numbytes=1000&code=200&delay=3");
 	for(;;)
 	{
-		char buf[1024];
+		char buf[8];
 		size_t read = res.read(buf, sizeof(buf));
 		if(!read) break;
 		std::cout << std::string_view(buf, read);
 	}
 	std::cout << std::endl;
+	return 0;
 }

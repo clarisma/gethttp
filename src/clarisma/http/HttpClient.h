@@ -15,6 +15,7 @@ public:
     HttpResponse() : hRequest_(nullptr) {}
     ~HttpResponse() { close(); }
     explicit HttpResponse(const HINTERNET hRequest) : hRequest_(hRequest) {}
+    int status() const;
     size_t read(void* buf, size_t size);
     void close();
 
@@ -29,8 +30,10 @@ public:
     ~HttpClient() { close(); };
     void setUserAgent(const char* name);
     void setRedirects(int max);
+    void setTimeout(int ms);
     void open();
     void close();
+    bool isOpen() { return hConnect_ != nullptr; }
     HttpResponse get(const char* url);
 
 private:

@@ -22,4 +22,10 @@ file(GLOB_RECURSE SOURCE_FILES "src/*.cpp")
 add_executable(gethttp ${SOURCE_FILES})
 
 target_include_directories(gethttp PRIVATE src)
+target_link_libraries(gethttp PRIVATE winhttp)
 
+add_custom_command(TARGET gethttp POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy
+        $<TARGET_FILE:gethttp>
+        "C:/geodesk/tests/gethttp.exe"
+)
