@@ -84,11 +84,18 @@ def add_executable(files, executable):
         executable = executable_win
     files.append((executable, os.path.join("build", executable)))
 
+def extract_version(ref_name):
+    """
+    Extracts the version number by stripping 'refs/tags/' and 'v'.
+    """
+    prefix = "refs/tags/"
+    if ref_name.startswith(prefix):
+        ref_name = ref_name[len(prefix):]
+    return ref_name.lstrip("v")
 
 if __name__ == "__main__":
     product = sys.argv[1]       # e.g. "gethttp"
-    version = sys.argv[2]       # major.minor.patch (possibly prefixed with "v")
-    version = version.lstrip("v")
+    version = extract_version(sys.argv[2])       # tag
     platform = sys.argv[3]      # e.g. "win-x64"
     token = sys.argv[4]         # the PAT required to access the downloads repo
     executable = product

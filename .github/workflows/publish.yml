@@ -37,6 +37,6 @@ jobs:
         run: |
           python3 tools/publish.py \
             gethttp \
-            ${{ GITHUB_REF_NAME }} \
+            ${{ github.ref }} \
             ${{ matrix.platform }} \
             ${{ secrets.PAT_TOKEN }}
