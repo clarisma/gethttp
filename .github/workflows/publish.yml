@@ -1,0 +1,42 @@
+name: Release Build and Publish
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  build-and-deploy:
+    name: Build and Deploy
+    strategy:
+      matrix:
+        include:
+          - platform: win-x64
+            os: windows-latest
+          - platform: linux-x64
+            os: ubuntu-latest
+          # - platform: mac-x64
+          #  os: macos-latest
+          # - platform: mac-arm
+          #  os: macos-latest
+
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Build the Project
+        run: |
+          mkdir build
+          cd build
+          cmake -DCMAKE_BUILD_TYPE=Release ..
+          cmake --build . --config Release
+
+      - name: Package and Upload
+        run: |
+          python3 tools/publish.py \
+            gethttp \
+            ${{ GITHUB_REF_NAME#v }} \
+            ${{ matrix.platform }} \
+            ${{ secrets.PAT_TOKEN }}
