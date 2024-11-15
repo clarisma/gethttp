@@ -79,10 +79,11 @@ def upload_to_repository(repo, file_path, dest_path, token):
     response.raise_for_status()  # Raise an exception for HTTP errors
 
 def add_executable(files, executable):
+    build_path = os.path.join("build", "Release")
     executable_win = executable + ".exe"
-    if os.path.isfile(os.path.join("build", executable_win)):
+    if os.path.isfile(os.path.join(build_path, executable_win)):
         executable = executable_win
-    files.append((executable, os.path.join("build", executable)))
+    files.append((executable, os.path.join(build_path, executable)))
 
 def extract_version(ref_name):
     """
