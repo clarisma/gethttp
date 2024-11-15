@@ -26,6 +26,11 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
+      - name: Install Dependencies
+        run: |
+          python3 -m pip install --upgrade pip
+          python3 -m pip install requests
+
       - name: Build the Project
         run: |
           mkdir build
@@ -35,8 +40,4 @@ jobs:
 
       - name: Package and Upload
         run: |
-          python3 tools/publish.py \
-            gethttp \
-            ${{ github.ref }} \
-            ${{ matrix.platform }} \
-            ${{ secrets.PAT_TOKEN }}
+          python3 tools/publish.py gethttp ${{ github.ref }} ${{ matrix.platform }} ${{ secrets.PAT_TOKEN }}
