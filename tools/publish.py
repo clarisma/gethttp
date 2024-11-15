@@ -86,10 +86,10 @@ def add_executable(files, executable):
 
 
 if __name__ == "__main__":
-    product = sys.argv[1]
-    version = sys.argv[2]
-    platform = sys.argv[3]
-    token = sys.argv[4]
+    product = sys.argv[1]       # e.g. "gethttp"
+    version = sys.argv[2]       # major.minor.patch
+    platform = sys.argv[3]      # e.g. "win-x64"
+    token = sys.argv[4]         # the PAT required to access the downloads repo
     executable = product
     release_name = f"{product}-{version}-{platform}"
     latest_release_name = f"{product}-latest-{platform}"
